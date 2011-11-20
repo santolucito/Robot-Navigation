@@ -1,0 +1,48 @@
+// Fun with matrices.
+//                               L. McGeoch, 3/2004
+
+public class Lab8 {
+
+	public Square[] matrix; 
+
+    public static void main (String[] args) {
+
+	new Lab8Frame();
+    }
+
+    //////////////////////////////////////////////////////////////////////
+    // getChoices():  returns the names that should appear in the pop-up menu
+    //////////////////////////////////////////////////////////////////////
+
+    public static String[] getChoices() {
+
+	String[] choices = {"Maze"};
+	return choices;
+    }
+
+    //////////////////////////////////////////////////////////////////////
+    // makePicture():  calls the appropriate method to make a drawing
+    //////////////////////////////////////////////////////////////////////
+
+    public static void makePicture(Square[][] b, String name) {
+
+	if (name.equals("Maze"))
+	    makeMaze(b);
+    }
+
+    public static void makeMaze (Square[][] b) {
+
+	int n = b.length;
+	for (int i=0; i<n; i++) {
+	    for (int j=0; j<n; ++j){
+		if(Math.random()>0.17) b[i][j].setState(2);
+		else if((i==n-1 && j==n-2)||(i==n-2 && j==n-1)
+			||(i==1 && j==0)||(i==0 && j==1))b[i][j].setState(2);
+		else b[i][j].setState(3);
+	    }
+	}
+	b[0][0].setState(1);
+	b[n-1][n-1].setState(4);
+	
+    }
+}

@@ -1,0 +1,361 @@
+import java.util.Vector;
+import java.io.*;
+
+//TODO when doing succesive searches, use the depth of the laast solution as the starting depthlimit for the next (for idaStar?)
+
+//make work and flush
+public class SearchBase {
+
+    private static final int PRINT_HOW_OFTEN = 1;
+    private static final int WAIT_TIME = 200;
+    public static boolean debug = false;
+    public static String which;
+    //public static boolean success  = true;//so we gen maze the first time
+    String startRobot; //"-----r-----/------XXX--/--XX----X--/--XX----X--/-----------/-----------/--XXXXXXX--/-----------";
+    String goalRobot; // "-----------/------XXX--/--XX----X--/--XX----X--/-----------/-----------/--XXXXXXX--/----------r";
+    FileOutputStream p;
+    DataOutputStream pout;
+    private State current;
+    private Lab8Frame frame;
+
+    public SearchBase() {
+
+    }
+
+    public  void SearchBase(FileOutputStream  p, DataOutputStream pout ) throws IOException {
+
+
+     	      this.p =p;
+	      this.pout = pout;//make work and flush
+	    //first param depth limit
+	    //second parameter chooses which search: bfs, dfs, dfid, aStar, idaStar, bfsRobot, dfsRobot, dfidRobot, aStarRobot1, aStarRobot2, idaStarRobot1 or idaStarRobot2"
+		
+	    /*   
+		if (args.length != 2){
+			System.out.println("Usage: bfs, dfs, dfid, aStar, idaStar, bfsRobot, dfsRobot, dfidRobot, aStarRobot1, aStarRobot2, idaStarRobot1 or idaStarRobot2");
+			System.exit(0);
+		}
+		int depth_limit = Integer.parseInt(args[0]);
+		which = args[1];
+		System.out.println("Depth Limit "+depth_limit);
+		int counter = 5; 
+		SearchBase searchBase = new SearchBase();
+		while(true){
+		    if(success) 
+			genMaze(counter);//genmaze will set start and goalRobot
+		    searchBase.process(depth_limit);
+		    if(!success) depth_limit++;
+		    counter++;
+		    
+		} */
+	}
+    
+    public void setWhich (String s){
+	this.which = s;
+    }
+
+    public void setStart (String s){
+	this.startRobot = s;
+    }
+    
+    public String getStart (){
+	return startRobot;
+    }
+    
+    public void setGoal (String s){
+	this.goalRobot = s;
+    }
+
+    public boolean process(int depth_limit, Lab8Frame f)  throws IOException{
+		frame = f;
+		//String start = "123/784/65x";
+		String start = "216/4x8/753";
+		String goal = "123/8x4/765";
+		PassBoolean p = new PassBoolean();
+					
+	
+		//EightPuzzle
+		if(which.equals("bfs")){
+			int NEXT_DEPTH = bestFirstSearch(p , depth_limit, new EightPuzzle(start, goal));   		
+			System.out.println("The goal was found: "+p.getValue() +" using bfs");
+			System.out.println();
+		}
+		
+		else if(which.equals("aStar")){
+			int NEXT_DEPTH = bestFirstSearch(p , depth_limit, new EightPuzzle(start, goal)); 
+			//this was best-first search, (but is the same as BestFS with no path costs) but now is 
+			//AStar because state.java's compareTo method uses an admissable heuristic	
+			System.out.println("The goal was found: "+p.getValue() +" using AStar");
+			System.out.println();
+		}
+		
+		else if(which.equals("dfs")){
+			int NEXT_DEPTH = vectorSearch(p , depth_limit, new EightPuzzle(start, goal));		//this is bounded depth first
+			System.out.println("The goal was found: "+p.getValue() + " using bounded depth first search");
+			System.out.println();
+		}
+		
+		else if(which.equals("dfid")){
+			int NEXT_DEPTH = 0;
+			int counter = 0;
+			do{			
+				NEXT_DEPTH = vectorSearch(p , NEXT_DEPTH, new EightPuzzle(start, goal));
+				counter ++;
+				if (p.getValue())
+					break;
+			}while(counter < depth_limit);
+			System.out.println("The goal was found: "+p.getValue() + " using DFID");
+			System.out.println();
+		}
+		else if(which.equals("idaStar")){
+			int NEXT_DEPTH = 0;
+			int counter = 0;
+			do{			
+				NEXT_DEPTH = vectorSearch2(p , NEXT_DEPTH, new EightPuzzle(start, goal));
+				counter ++;
+				if (p.getValue())
+					break;
+			}while(counter < depth_limit);//depth limit is now only to prevent infinite searching if no solution found
+			System.out.println("The goal was found: "+p.getValue() + " using IDAStar");
+		}//End of Eight Puzzle
+
+
+
+
+
+		//RobotNavi
+		else if(which.equals("idaStarRobot1")||which.equals("idaStarRobot2")){
+			int NEXT_DEPTH = 0;
+			int counter = 0;
+			do{ //this is IDAStar for the robot nav
+			    NEXT_DEPTH = vectorSearch2(p , NEXT_DEPTH, new RobotNavigation(startRobot, goalRobot)); //uses vector and f value, its ok its not PQ
+			    counter ++;
+			    
+			    if (p.getValue())
+				break;
+			}while(counter < depth_limit);//depth limit is now only to prevent infinite searching if no solution found
+			System.out.println("The goal was found: "+p.getValue() + " using IDAStar");
+		}
+
+		else if(which.equals("bfsRobot")){
+			int NEXT_DEPTH = bestFirstSearch(p , depth_limit, new RobotNavigation(startRobot, goalRobot));   		
+			System.out.println("The goal was found: "+p.getValue() +" using bfs");
+			System.out.println();
+		}
+		
+		else if(which.equals("aStarRobot1")||which.equals("aStarRobot2")||which.equals("aStarRobot3")||which.equals("aStarRobot4")){
+			int NEXT_DEPTH = bestFirstSearch(p , depth_limit, new RobotNavigation(startRobot, goalRobot));  
+			System.out.println("The goal was found: "+p.getValue() +" using AStar");
+			System.out.println();
+		}
+		
+		else if(which.equals("dfsRobot")){
+			int NEXT_DEPTH = vectorSearch(p , depth_limit, new RobotNavigation(startRobot, goalRobot));		//this is bounded depth first
+			System.out.println("The goal was found: "+p.getValue() + " using bounded depth first search");
+			System.out.println();
+		}
+		
+		else if(which.equals("dfidRobot")){
+			int NEXT_DEPTH = 30;
+			int counter = 0;
+			do{					
+			    NEXT_DEPTH = vectorSearch(p , NEXT_DEPTH, new RobotNavigation(startRobot, goalRobot));
+				counter ++;
+				if (p.getValue())
+					break;
+			}while(counter < depth_limit);
+			System.out.println("The goal was found: "+p.getValue() + " using DFID");
+			System.out.println();
+		}
+		
+		else System.out.println("Searches availble: bfs, dfs, dfid, aStar, idaStar, bfsRobot, dfsRobot, dfidRobot, aStarRobot1, aStarRobot2, idaStarRobot1 or idaStarRobot2");
+
+		return p.getValue();
+		
+		
+	}
+
+
+
+
+
+
+
+
+	
+    private SearchList open;
+	public int idaSearch(PassBoolean done, int limit, StateSpace ssp, SearchList open2)  throws IOException{
+	    open=open2;
+		System.out.println("Starting with limit" + limit);
+		open.add(new State(ssp.getStart(), ssp.getGoal(),which));
+
+		int count = 0;
+		int nextFLimit = Integer.MAX_VALUE;   //functionally infinite
+		while (!done.getValue()) {
+		
+			if (open.size()==0) {
+				System.out.println("open list empty at "+count);
+				break;
+			}
+			
+			current =  open.remove();					//for IDAStar we use a vector (so it performs DFS)
+			count++;
+			if (count % PRINT_HOW_OFTEN == 0) {
+			    print();
+			}
+			if (ssp.isGoal(current.getRep())) {
+				done.set(true);
+				System.out.println(count+"> found goal at "+current.getRep()+" at depth "+current.getDepth());
+				//pout.writeBytes(count+"> found goal at "+current.getRep()+" at depth "+current.getDepth());
+				//current.printPath();
+				break;
+			}
+			
+			if (current.getDepth() <= limit) {
+				Vector<String> kids = ssp.getKids(current.getRep());
+				
+				for (String v : kids) {
+					if (!current.getPath().contains(v)){
+						State s = new State(current,v,ssp.getGoal(),which);
+						if(which.equals("idaStar")){
+							if (s.fValue(s) <= limit)
+								open.add(s);
+							if (s.fValue(s) > limit && s.fValue(s) < nextFLimit)
+								nextFLimit = s.fValue(s);
+						}
+						else if(which.equals("idaStarRobot1")){
+							if (s.fValue2(s) <= limit)
+								open.add(s);
+							if (s.fValue2(s) > limit && s.fValue2(s) < nextFLimit)
+								nextFLimit = s.fValue(s);
+						}
+						else if(which.equals("idaStarRobot2")){
+							if (s.fValue3(s) <= limit)
+								open.add(s);
+							if (s.fValue3(s) > limit && s.fValue3(s) < nextFLimit)
+								nextFLimit = s.fValue3(s);
+						}
+					}
+				}
+			}
+		}
+		return nextFLimit;
+	}
+	
+	public int search(PassBoolean done, int limit, StateSpace ssp, SearchList open2)  throws IOException{
+	    open=open2;
+		System.out.println("Starting search with limit "+ limit);
+		
+		open.add(new State(ssp.getStart(),ssp.getGoal(),which));
+		
+		int count = 0;
+
+		while (!done.getValue()) {
+		
+			if (open.size()==0) {
+				System.out.println("open list empty at "+count);
+				break;
+			}
+			
+			current =  open.remove();
+			count++;
+			if (count % PRINT_HOW_OFTEN == 0) {
+				print();
+			}
+			if (ssp.isGoal(current.getRep())) {
+				done.set(true);
+				System.out.println(count+"> found goal at "+current.getRep()+" at depth "+current.getDepth());
+				//pout.writeBytes(count+"> found goal at "+current.getRep()+" at depth "+current.getDepth());
+
+				//current.printPath();
+				break;
+			}
+			
+			if (current.getDepth() <= limit) {
+				Vector<String> kids = ssp.getKids(current.getRep());
+			
+				for (String v : kids) {
+					if (!current.getPath().contains(v)) 
+						open.add(new State(current,v,ssp.getGoal(),which));
+				}
+			}
+		}
+
+		return limit+1;
+	}
+	public void print(){
+		frame.myCanvas.repaint();
+		try{Thread.sleep(WAIT_TIME);}
+		catch (InterruptedException e){}	
+	}
+	
+	public int vectorSearch(PassBoolean done, int limit, StateSpace ssp) throws IOException{ 
+			
+		return search(done,limit,ssp,new VectorasList());
+	}
+	
+	public int vectorSearch2(PassBoolean done, int limit, StateSpace ssp)  throws IOException{
+		
+		return idaSearch(done,limit,ssp,new VectorasList());
+	}
+
+
+	public int bestFirstSearch(PassBoolean done, int limit, StateSpace ssp)  throws IOException{
+			
+		return search(done,limit,ssp,new PQasList());
+	}
+	
+
+
+    public void makeArray(Square [][] squares) {
+
+	int i=0;
+	int j=0;
+	for(int ctr=0;ctr<current.getRep().length();ctr++){//build the matrix for the current state
+		
+	    if(current.getRep().charAt(ctr)!='/'){
+    	        squares[i][j]= new Square(current.getRep().charAt(ctr));
+	        //System.out.println(squares[i][j]+" "+current.getRep().charAt(i+j)+" "+j+" "+i+" "+ctr);
+	        j++;
+		if(j%squares.length==0){
+		    j=0;
+		    i++;
+	        }
+	    }
+	    else{ //System.out.println( current.getRep().charAt(ctr)+" !");
+	    }
+	
+	}
+	i=0;
+	j=0;
+	String path=current.getPath().toString();
+	//System.out.println(current.getPath().toString()+" "+squares.length);
+
+	int ctr1=1;//skip the '['
+	int stepNum=0;
+	for(int ctr=ctr1;ctr<path.length()-2-(squares.length*(squares.length+1));ctr++){//edit matrix to include path
+	    if(path.charAt(ctr)=='r'){
+		squares[i][j].setState(5);
+		squares[i][j].setStep(stepNum);
+		stepNum++;
+	    }
+	    j++;
+	    if(j%squares.length==0){//end of a row of a rep
+		j=0;
+		i++;
+		ctr++;//skip '/'
+	    }
+	    if(i%squares.length==0&&i!=0){//end of a rep
+		j=0;
+		i=0;
+		ctr+=2;//skip the ', '
+	    }
+	}
+    }
+
+
+
+
+
+	
+}

@@ -1,0 +1,17 @@
+public class genMaze{
+
+    public static void main(String[] args){
+	String goal="";
+	Stirng start="";
+	int length = "11";
+	for (int i =0; i<length; i++){
+	    for (int j =0;j<length; j++){
+		goal=goal+"-";
+		start=start+"-";
+	    }
+	    goal=goal+"/";
+	    start=start+"/";
+	}
+	System.out.println(start);
+    }
+	    

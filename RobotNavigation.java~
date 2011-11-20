@@ -1,0 +1,58 @@
+import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+
+public class RobotNavigation implements StateSpace {
+
+	String start;
+	String goal;
+	
+	public RobotNavigation(String start, String goal) {
+		this.start = start;
+		this.goal = goal;
+	}
+
+	public Vector<String> getKids(String current) {
+		Vector<String> kids = new Vector<String>();
+		
+		doOne(kids,"r...........-",current);
+		doOne(kids,"-...........r",current);
+		doOne(kids,"r-",current);
+		doOne(kids,"-r",current);
+
+		return kids;
+	}
+
+private void doOne(Vector<String> kids, String string, String current) {
+		
+		Pattern p = Pattern.compile(string);
+		Matcher matcher = p.matcher(current);
+		StringBuffer buf = new StringBuffer();
+		if (matcher.find()) {
+			String rep = matcher.group();
+			if (rep.length() == 2) 
+				rep = ""+rep.charAt(1)+rep.charAt(0);
+			else if (rep.length() == 13)
+				rep = ""+rep.charAt(12)+rep.charAt(1)+rep.charAt(2)+rep.charAt(3)+rep.charAt(4)+rep.charAt(5)+rep.charAt(6)+rep.charAt(7)+rep.charAt(8)+rep.charAt(9)+rep.charAt(10)+rep.charAt(11)+rep.charAt(0);
+			matcher.appendReplacement(buf, rep);
+		
+			matcher.appendTail(buf);
+		
+			kids.add(buf.toString());
+		}
+		
+	}
+
+public String getGoal() {
+	return goal;
+}
+
+public String getStart() {
+	return start;
+}
+
+public boolean isGoal(String rep) {
+	return rep.equals(getGoal());
+}
+}
