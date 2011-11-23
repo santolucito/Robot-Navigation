@@ -7,7 +7,7 @@ public class Lab8Frame extends JFrame implements ActionListener{
     public Lab8Canvas myCanvas;  // These are instance variables
     //private JTextField squares;    // variables that are part of the frame
     private JLabel sLabel;         // object and are not local to a method.
-    //private JComboBox choice;
+    private JComboBox choice;
     //private JButton run;
     private int rows;
     public final int canvasWidth = 700;
@@ -21,14 +21,14 @@ public class Lab8Frame extends JFrame implements ActionListener{
 	addWindowListener(new MyWindowAdapter());
 
 	myCanvas = new Lab8Canvas(canvasWidth, rows, searchBase);
-	sLabel   = new JLabel ("Searching with "+s.which+" search...");
+	sLabel   = new JLabel (s.which+" --Description of search goes here.");
 	//squares  = new JTextField(rows+"");
 	//run      = new JButton("New Maze");
 
-	//String[] choices = Lab8.getChoices();
-	//choice = new JComboBox(choices);
-	//choice.setSelectedIndex(0);
-	//choice.addActionListener(this);
+	String[] choices = {"dfsRobot","bfsRobot","aStarRobot2","idaStarRobot2"};
+	choice = new JComboBox(choices);
+	choice.setSelectedIndex(0);
+	choice.addActionListener(this);
 	//squares.addActionListener(this);
 	//run.addActionListener(this);           
 						 /* hitting enter in the text
@@ -40,13 +40,13 @@ public class Lab8Frame extends JFrame implements ActionListener{
 	add(myCanvas);                 /* we add components to the frame */  
 	add(sLabel);
 	//add(squares);
-	//add(choice);
+	add(choice);
 	//add(run);
 
 	setVisible(true);
 	setSize (canvasWidth + 500, canvasWidth + 100);
 
-	//JComboBox cb = (JComboBox)choice;
+	JComboBox cb = (JComboBox)choice;
 	//myCanvas.setChoice((String)cb.getSelectedItem());
 	myCanvas.repaint();
 
