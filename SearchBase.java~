@@ -156,7 +156,7 @@ public class SearchBase {
 		}
 		
 		else if(which.equals("dfidRobot")){
-			int NEXT_DEPTH = 30;
+			int NEXT_DEPTH = 0;
 			int counter = 0;
 			do{					
 			    NEXT_DEPTH = vectorSearch(p , NEXT_DEPTH, new RobotNavigation(startRobot, goalRobot));
@@ -311,6 +311,7 @@ public class SearchBase {
 
 	int i=0;
 	int j=0;
+	
 	for(int ctr=0;ctr<current.getRep().length();ctr++){//build the matrix for the current state
 		
 	    if(current.getRep().charAt(ctr)!='/'){
@@ -350,6 +351,27 @@ public class SearchBase {
 		i=0;
 		ctr+=2;//skip the ', '
 	    }
+	}
+
+	i=0;
+	j=0;
+	System.out.println(goalRobot);
+	for(int ctr = 0; ctr<goalRobot.length();ctr++){
+
+	     if(goalRobot.charAt(ctr)=='r'){
+		if(current.charAt(ctr)!='r') squares[i][j].setState(4);
+		System.out.println(i+" "+j);
+		break;
+	     }
+	  
+	   if(goalRobot.charAt(ctr)!='/'){
+		j++;
+		if(j%squares.length==0){//end of a row of a rep
+		    j=0;
+		    i++;
+		}
+	    
+ 	     }
 	}
     }
 
