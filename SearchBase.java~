@@ -13,20 +13,12 @@ public class SearchBase {
     //public static boolean success  = true;//so we gen maze the first time
     String startRobot; //"-----r-----/------XXX--/--XX----X--/--XX----X--/-----------/-----------/--XXXXXXX--/-----------";
     String goalRobot; // "-----------/------XXX--/--XX----X--/--XX----X--/-----------/-----------/--XXXXXXX--/----------r";
-    FileOutputStream p;
-    DataOutputStream pout;
     private State current;
     private Lab8Frame frame;
 
-    public SearchBase() {
-
-    }
-
-    public  void SearchBase(FileOutputStream  p, DataOutputStream pout ) throws IOException {
+    public void SearchBase(){
 
 
-     	      this.p =p;
-	      this.pout = pout;//make work and flush
 	    //first param depth limit
 	    //second parameter chooses which search: bfs, dfs, dfid, aStar, idaStar, bfsRobot, dfsRobot, dfidRobot, aStarRobot1, aStarRobot2, idaStarRobot1 or idaStarRobot2"
 		
@@ -66,7 +58,7 @@ public class SearchBase {
 	this.goalRobot = s;
     }
 
-    public boolean process(int depth_limit, Lab8Frame f)  throws IOException{
+    public boolean process(int depth_limit, Lab8Frame f){
 		frame = f;
 		//String start = "123/784/65x";
 		String start = "216/4x8/753";
@@ -184,7 +176,7 @@ public class SearchBase {
 
 	
     private SearchList open;
-	public int idaSearch(PassBoolean done, int limit, StateSpace ssp, SearchList open2)  throws IOException{
+	public int idaSearch(PassBoolean done, int limit, StateSpace ssp, SearchList open2) {
 	    open=open2;
 		System.out.println("Starting with limit" + limit);
 		open.add(new State(ssp.getStart(), ssp.getGoal(),which));
@@ -242,8 +234,8 @@ public class SearchBase {
 		return nextFLimit;
 	}
 	
-	public int search(PassBoolean done, int limit, StateSpace ssp, SearchList open2)  throws IOException{
-	    open=open2;
+	public int search(PassBoolean done, int limit, StateSpace ssp, SearchList open2) {
+	    	open=open2;
 		System.out.println("Starting search with limit "+ limit);
 		
 		open.add(new State(ssp.getStart(),ssp.getGoal(),which));
@@ -289,18 +281,18 @@ public class SearchBase {
 		catch (InterruptedException e){}	
 	}
 	
-	public int vectorSearch(PassBoolean done, int limit, StateSpace ssp) throws IOException{ 
+	public int vectorSearch(PassBoolean done, int limit, StateSpace ssp){ 
 			
 		return search(done,limit,ssp,new VectorasList());
 	}
 	
-	public int vectorSearch2(PassBoolean done, int limit, StateSpace ssp)  throws IOException{
+	public int vectorSearch2(PassBoolean done, int limit, StateSpace ssp){
 		
 		return idaSearch(done,limit,ssp,new VectorasList());
 	}
 
 
-	public int bestFirstSearch(PassBoolean done, int limit, StateSpace ssp)  throws IOException{
+	public int bestFirstSearch(PassBoolean done, int limit, StateSpace ssp) {
 			
 		return search(done,limit,ssp,new PQasList());
 	}
@@ -355,12 +347,12 @@ public class SearchBase {
 
 	i=0;
 	j=0;
-	System.out.println(goalRobot);
+	//System.out.println(goalRobot);
 	for(int ctr = 0; ctr<goalRobot.length();ctr++){
 
 	     if(goalRobot.charAt(ctr)=='r'){
-		if(current.charAt(ctr)!='r') squares[i][j].setState(4);
-		System.out.println(i+" "+j);
+		if(current.getRep().charAt(ctr)!='r') squares[i][j].setState(4);
+		//System.out.println(i+" "+j);
 		break;
 	     }
 	  

@@ -2,7 +2,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class Lab8Frame extends JFrame implements ActionListener{
+public class Lab8Frame extends JApplet implements ActionListener{
 
     public Lab8Canvas myCanvas;  // These are instance variables
     //private JTextField squares;    // variables that are part of the frame
@@ -21,7 +21,7 @@ public class Lab8Frame extends JFrame implements ActionListener{
 	addWindowListener(new MyWindowAdapter());
 
 	myCanvas = new Lab8Canvas(canvasWidth, rows, searchBase);
-	sLabel   = new JLabel (" Description of search goes here.");
+	sLabel   = new JLabel (s.which+" --Description of search goes here.");
 	//squares  = new JTextField(rows+"");
 	//run      = new JButton("New Maze");
 

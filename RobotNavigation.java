@@ -18,8 +18,8 @@ public class RobotNavigation implements StateSpace {
 		String s1 = "r";
 		String s2 = "-";
 		
-		for(int i=1;i< current.indexOf("/")+1;i++){
-		    s1+=".";
+		for(int i=1;i< current.indexOf("/")+1;i++){//nextline
+		    s1+=".";//anything
 		    s2+=".";
 		}
 		s1+="-";

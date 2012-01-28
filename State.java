@@ -64,17 +64,17 @@ public class State implements Comparable<State> {
 	
     }
 
-    public int fValue2(State other){				//used by idaStarRobot1
+    public int fValue2(State other){				//used by idaStarRobot1 & astarRobot1
 	//first heuristic: horizontal distance to goal
-	int horizontalHeur = Math.abs(goal.indexOf('r')%size - other.getRep().indexOf('r')%size);
+	int horizontalHeur = Math.abs(goal.indexOf('r')%(size+1) - other.getRep().indexOf('r')%(size+1));
 	return horizontalHeur + ((State) other).getDepth();
 	//admissable because it takes at least one vertical move to reach goal
     }
     
-    public int fValue3(State other){				//used by idaStarRobot2
+    public int fValue3(State other){				//used by idaStarRobot2 & astarRobot2
 	//second heuristic: straight line distance to goal
-	int vertDist = Math.abs((goal.indexOf('r')/size)+1 - (other.getRep().indexOf('r')/size)+1);
-	int horizontalDist = Math.abs(goal.indexOf('r')%size - other.getRep().indexOf('r')%size);
+	int vertDist = Math.abs((goal.indexOf('r')/(size+1)) - (other.getRep().indexOf('r')/(size+1)));
+	int horizontalDist = Math.abs(goal.indexOf('r')%(size+1) - other.getRep().indexOf('r')%(size+1));
 	int Heur = ((int) Math.sqrt(vertDist*vertDist + horizontalDist*horizontalDist));		//straight line distance to goal
 	
 	return Heur + ((State) other).getDepth();

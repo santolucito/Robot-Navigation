@@ -1,14 +1,19 @@
 import java.io.*;
 
-public class Runner {
+public class Runner{
 
+   
 
+    public static void main (String [] args) {
+	
+	/*Runner r = new Runner();
+	r.go();
+}
+    public void go(){*/
 
-    public static void main (String [] args) throws IOException, InterruptedException{
-
-	FileOutputStream p = new FileOutputStream("output.txt");
-	DataOutputStream pout = new DataOutputStream(p);
-	File f= new File ("output.txt");
+	//FileOutputStream p = new FileOutputStream("output.txt");
+	//DataOutputStream pout = new DataOutputStream(p);
+	//File f= new File ("output.txt");
 	
 
 	boolean success = true;
@@ -39,11 +44,11 @@ public class Runner {
 	String start="";
 	for (int i =0; i<length; i++){
 	    for (int j =0;j<length; j++){
-		if(i==0&&j==0){
+		if(i==0&&j==0){//start position
 		    start=start+"r";
 		    goal=goal+"-";
 		}
-		else if(i==length-1&&j==length-1){
+		else if(i==length-1&&j==length-1){//goal position
 		    start=start+"-";
 		    goal=goal+"r";
 		}
@@ -54,7 +59,7 @@ public class Runner {
 		    goal=goal+"-";
 		    start=start+"-";
 		}
-		else if(Math.random()>.17){
+		else if(Math.random()>.00){//density of obstacles
 		    goal=goal+"-";
 		    start=start+"-";
 		}

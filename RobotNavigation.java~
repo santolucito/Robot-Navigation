@@ -15,12 +15,23 @@ public class RobotNavigation implements StateSpace {
 
 	public Vector<String> getKids(String current) {
 		Vector<String> kids = new Vector<String>();
+		String s1 = "r";
+		String s2 = "-";
 		
-		doOne(kids,"r...........-",current);
-		doOne(kids,"-...........r",current);
+		for(int i=1;i< current.indexOf("/")+1;i++){
+		    s1+=".";
+		    s2+=".";
+		}
+		s1+="-";
+		s2+="r";
+
+		//System.out.println(s1+"/n"+s2);
+		
+		doOne(kids,s1,current);
+		doOne(kids,s2,current);
 		doOne(kids,"r-",current);
 		doOne(kids,"-r",current);
-
+		//System.out.println(kids);
 		return kids;
 	}
 
@@ -32,9 +43,13 @@ private void doOne(Vector<String> kids, String string, String current) {
 		if (matcher.find()) {
 			String rep = matcher.group();
 			if (rep.length() == 2) 
-				rep = ""+rep.charAt(1)+rep.charAt(0);
-			else if (rep.length() == 13)
-				rep = ""+rep.charAt(12)+rep.charAt(1)+rep.charAt(2)+rep.charAt(3)+rep.charAt(4)+rep.charAt(5)+rep.charAt(6)+rep.charAt(7)+rep.charAt(8)+rep.charAt(9)+rep.charAt(10)+rep.charAt(11)+rep.charAt(0);
+			    rep = ""+rep.charAt(1)+rep.charAt(0);
+			else if (rep.length() == current.indexOf("/")+2){
+			    String trep = ""+rep.charAt(current.indexOf("/")+1);
+			    for(int i = 1;i< current.indexOf("/")+1;i++) trep+=rep.charAt(i);
+			    trep+=rep.charAt(0);
+			    rep=trep;
+			}
 			matcher.appendReplacement(buf, rep);
 		
 			matcher.appendTail(buf);
