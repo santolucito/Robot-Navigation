@@ -5,32 +5,34 @@ import javax.swing.*;
 public class Lab8Frame extends JFrame implements ActionListener{
 
     public Lab8Canvas myCanvas;  // These are instance variables
-    //private JTextField squares;    // variables that are part of the frame
+    private JTextField squares;    // variables that are part of the frame
     private JLabel sLabel;         // object and are not local to a method.
     private JComboBox choice;
-    //private JButton run;
-    private int rows;
+    private JButton newMaze;
+    private int rows =10;
     public final int canvasWidth = 700;
     private SearchBase searchBase;
+    private Runner r;
 
-    Lab8Frame (int i, SearchBase s) {
+    Lab8Frame (int i, SearchBase s, Runner r) {
 	super();
 	rows=i;
 	searchBase = s;
+	this.r = r;
 	setLocation(100, 100);
 	addWindowListener(new MyWindowAdapter());
 
 	myCanvas = new Lab8Canvas(canvasWidth, rows, searchBase);
 	sLabel   = new JLabel (s.which+" --Description of search goes here.");
-	//squares  = new JTextField(rows+"");
-	//run      = new JButton("New Maze");
+	squares  = new JTextField(rows+"");
+	newMaze      = new JButton("New Maze");
 
 	String[] choices = {"dfsRobot","bfsRobot","aStarRobot2","idaStarRobot2"};
 	choice = new JComboBox(choices);
 	choice.setSelectedIndex(0);
 	choice.addActionListener(this);
-	//squares.addActionListener(this);
-	//run.addActionListener(this);           
+	squares.addActionListener(this);
+	newMaze.addActionListener(this);           
 						 /* hitting enter in the text
 						field will cause
 						actionPerformed to be called */
@@ -39,9 +41,9 @@ public class Lab8Frame extends JFrame implements ActionListener{
       
 	add(myCanvas);                 /* we add components to the frame */  
 	add(sLabel);
-	//add(squares);
+	add(squares);
 	add(choice);
-	//add(run);
+	add(newMaze);
 
 	setVisible(true);
 	setSize (canvasWidth + 500, canvasWidth + 100);
@@ -53,15 +55,19 @@ public class Lab8Frame extends JFrame implements ActionListener{
     }
 
     public void actionPerformed (ActionEvent e) {
-	/*if (e.getSource() == choice) {
+	//TODO need to stop searchBase process before changing anything, use InterruptException?
+	if (e.getSource() == choice) {
 	    JComboBox cb = (JComboBox)e.getSource();
 	    myCanvas.setChoice((String)cb.getSelectedItem());
+	    searchBase.setWhich((String)cb.getSelectedItem());
 	    myCanvas.repaint();
 	}
-	else if (e.getSource() == run) {
-	    JComboBox cb = (JComboBox)choice;
-	    myCanvas.setChoice((String)cb.getSelectedItem());
+	else if (e.getSource() == newMaze) {
+	    r.genMaze(rows,searchBase);
+	    searchBase.process(100, this);
 	    myCanvas.repaint();
+
+
 	}
 	else if (e.getSource() ==  squares) {
 	    try {
@@ -73,7 +79,7 @@ public class Lab8Frame extends JFrame implements ActionListener{
 	    }
 	    myCanvas.setRows(rows);
 	    myCanvas.repaint();
-	}*/
+	}
     }
 
     private class MyWindowAdapter extends WindowAdapter {

@@ -28,8 +28,8 @@ public class Runner{
 	int counter = Integer.parseInt(three); //size of maze, and loop count
 	SearchBase searchBase = new SearchBase();
 	searchBase.setWhich(which);
-	genMaze(counter, searchBase);
-	Lab8Frame frame = new Lab8Frame(counter,searchBase);	
+	this.genMaze(counter, searchBase);
+	Lab8Frame frame = new Lab8Frame(counter,searchBase,this);	
 
 	//see below for multiple runs
 
@@ -40,7 +40,7 @@ public class Runner{
 
 
 
-    public static void genMaze(int length, SearchBase s){
+    public void genMaze(int length, SearchBase s){
 	String goal="";
 	String start="";
 	for (int i =0; i<length; i++){
